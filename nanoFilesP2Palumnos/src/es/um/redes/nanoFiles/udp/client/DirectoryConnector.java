@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
 import es.um.redes.nanoFiles.application.NanoFiles;
@@ -58,13 +59,13 @@ public class DirectoryConnector {
 		 * guardar la dirección de socket (address:DIRECTORY_PORT) del directorio en el
 		 * atributo directoryAddress, para poder enviar datagramas a dicho destino.
 		 */
+		InetAddress address = InetAddress.getByName(hostname);
+		directoryAddress = new InetSocketAddress(address, DIRECTORY_PORT);
 		/*
 		 * TODO: (Boletín SocketsUDP) Crea el socket UDP en cualquier puerto para enviar
 		 * datagramas al directorio
 		 */
-
-
-
+		socket = new DatagramSocket();
 	}
 
 	/**
@@ -81,7 +82,6 @@ public class DirectoryConnector {
 			System.err.println(
 					"DirectoryConnector.sendAndReceiveDatagrams: make sure constructor initializes field \"directoryAddress\"");
 			System.exit(-1);
-
 		}
 		if (socket == null) {
 			System.err.println("DirectoryConnector.sendAndReceiveDatagrams: UDP socket is null!");
@@ -94,6 +94,14 @@ public class DirectoryConnector {
 		 * recibir una respuesta. El array devuelto debe contener únicamente los datos
 		 * recibidos, *NO* el búfer de recepción al completo.
 		 */
+		DatagramPacket packetToSend = new DatagramPacket(requestData, requestData.length, directoryAddress);
+		try {
+			socket.send(packetToSend);
+			System.out.println("Datagram sent to " + directoryAddress);
+		} catch (IOException e) {	// TODO: Tratar después las excepciones de forma más clara
+			e.printStackTrace();
+		}
+
 		/*
 		 * TODO: (Boletín SocketsUDP) Una vez el envío y recepción asumiendo un canal
 		 * confiable (sin pérdidas) esté terminado y probado, debe implementarse un
@@ -102,6 +110,27 @@ public class DirectoryConnector {
 		 * a enviar el datagrama y tratar de recibir respuestas, reintentando como
 		 * máximo en MAX_NUMBER_OF_ATTEMPTS ocasiones.
 		 */
+		DatagramPacket packetToReceive = new DatagramPacket(responseData, responseData.length);
+		try {
+			socket.setSoTimeout(TIMEOUT);
+			socket.receive(packetToReceive);
+			response = packetToReceive.getData();
+		} catch (SocketTimeoutException e) {
+			System.err.println("Timeout reached. Retransmitting max " + MAX_NUMBER_OF_ATTEMPTS + " times...");
+			for (int i = 0; i < MAX_NUMBER_OF_ATTEMPTS; i++) {		
+				try {
+					socket.send(packetToSend);
+					socket.receive(packetToReceive);
+					response = packetToReceive.getData();
+					break;
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+			}
+		} catch	(IOException e) {
+			System.err.println("Error while receiving the packet, terminating!!");
+			System.exit(-1);	// TODO: Cambiar código de error
+		}
 		/*
 		 * TODO: (Boletín SocketsUDP) Las excepciones que puedan lanzarse al
 		 * leer/escribir en el socket deben ser capturadas y tratadas en este método. Si
@@ -113,8 +142,7 @@ public class DirectoryConnector {
 		 * SocketTimeoutException es más concreta que IOException.
 		 */
 
-
-
+		// TODO: Preguntar este if dado
 		if (response != null && response.length == responseData.length) {
 			System.err.println("Your response is as large as the datagram reception buffer!!\n"
 					+ "You must extract from the buffer only the bytes that belong to the datagram!");
@@ -137,7 +165,13 @@ public class DirectoryConnector {
 		 */
 		boolean success = false;
 
-
+		String ping = "ping";
+		byte[] pingData = ping.getBytes();
+		byte[] response = sendAndReceiveDatagrams(pingData);
+		String responseString = new String(response);
+		if (responseString.startsWith("pingok")) {
+			success = true;
+		}
 
 		return success;
 	}
@@ -167,8 +201,6 @@ public class DirectoryConnector {
 		 * fracaso. 6.Devolver éxito/fracaso de la operación.
 		 */
 
-
-
 		return success;
 	}
 
@@ -191,8 +223,6 @@ public class DirectoryConnector {
 		 * 6.Extraer datos del objeto DirMessage y procesarlos 7.Devolver éxito/fracaso
 		 * de la operación
 		 */
-
-
 
 		return success;
 	}
