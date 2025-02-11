@@ -55,14 +55,14 @@ public class DirectoryConnector {
 		// Guardamos el string con el nombre/IP del host
 		directoryHostname = hostname;
 		/*
-		 * TODO: (Boletín SocketsUDP) Convertir el string 'hostname' a InetAddress y
+		 * (Boletín SocketsUDP) Convertir el string 'hostname' a InetAddress y
 		 * guardar la dirección de socket (address:DIRECTORY_PORT) del directorio en el
 		 * atributo directoryAddress, para poder enviar datagramas a dicho destino.
 		 */
 		InetAddress address = InetAddress.getByName(hostname);
 		directoryAddress = new InetSocketAddress(address, DIRECTORY_PORT);
 		/*
-		 * TODO: (Boletín SocketsUDP) Crea el socket UDP en cualquier puerto para enviar
+		 * (Boletín SocketsUDP) Crea el socket UDP en cualquier puerto para enviar
 		 * datagramas al directorio
 		 */
 		socket = new DatagramSocket();
@@ -90,7 +90,7 @@ public class DirectoryConnector {
 			System.exit(-1);
 		}
 		/*
-		 * TODO: (Boletín SocketsUDP) Enviar datos en un datagrama al directorio y
+		 * (Boletín SocketsUDP) Enviar datos en un datagrama al directorio y
 		 * recibir una respuesta. El array devuelto debe contener únicamente los datos
 		 * recibidos, *NO* el búfer de recepción al completo.
 		 */
@@ -103,7 +103,7 @@ public class DirectoryConnector {
 		}
 
 		/*
-		 * TODO: (Boletín SocketsUDP) Una vez el envío y recepción asumiendo un canal
+		 * (Boletín SocketsUDP) Una vez el envío y recepción asumiendo un canal
 		 * confiable (sin pérdidas) esté terminado y probado, debe implementarse un
 		 * mecanismo de retransmisión usando temporizador, en caso de que no se reciba
 		 * respuesta en el plazo de TIMEOUT. En caso de salte el timeout, se debe volver
@@ -158,7 +158,7 @@ public class DirectoryConnector {
 	 */
 	public boolean testSendAndReceive() {
 		/*
-		 * TODO: (Boletín SocketsUDP) Probar el correcto funcionamiento de
+		 * (Boletín SocketsUDP) Probar el correcto funcionamiento de
 		 * sendAndReceiveDatagrams. Se debe enviar un datagrama con la cadena "ping" y
 		 * comprobar que la respuesta recibida empieza por "pingok". En tal caso,
 		 * devuelve verdadero, falso si la respuesta no contiene los datos esperados.

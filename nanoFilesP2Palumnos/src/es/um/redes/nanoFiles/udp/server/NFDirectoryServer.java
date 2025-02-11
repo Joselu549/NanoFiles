@@ -5,6 +5,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -18,17 +19,19 @@ public class NFDirectoryServer {
 	 * Número de puerto UDP en el que escucha el directorio
 	 */
 	public static final int DIRECTORY_PORT = 6868;
+	
+	private static final int MAX_MSG_SIZE_BYTES = 64; //TODO: Cambiar a otro valor?
 
 	/**
 	 * Socket de comunicación UDP con el cliente UDP (DirectoryConnector)
 	 */
 	private DatagramSocket socket = null;
 	/*
-	 * TODO: Añadir aquí como atributos las estructuras de datos que sean necesarias
-	 * para mantener en el directorio cualquier información necesaria para la
-	 * funcionalidad del sistema nanoFilesP2P: ficheros publicados, servidores
-	 * registrados, etc.
-	 */
+		* TODO: Añadir aquí como atributos las estructuras de datos que sean necesarias
+		* para mantener en el directorio cualquier información necesaria para la
+		* funcionalidad del sistema nanoFilesP2P: ficheros publicados, servidores
+		* registrados, etc.
+		*/
 
 
 
@@ -41,20 +44,20 @@ public class NFDirectoryServer {
 
 	public NFDirectoryServer(double corruptionProbability) throws SocketException {
 		/*
-		 * Guardar la probabilidad de pérdida de datagramas (simular enlace no
-		 * confiable)
-		 */
+			* Guardar la probabilidad de pérdida de datagramas (simular enlace no
+			* confiable)
+			*/
 		messageDiscardProbability = corruptionProbability;
 		/*
-		 * TODO: (Boletín SocketsUDP) Inicializar el atributo socket: Crear un socket
-		 * UDP ligado al puerto especificado por el argumento directoryPort en la
-		 * máquina local,
-		 */
+			* (Boletín SocketsUDP) Inicializar el atributo socket: Crear un socket
+			* UDP ligado al puerto especificado por el argumento directoryPort en la
+			* máquina local,
+			*/
+		socket = new DatagramSocket(DIRECTORY_PORT);
 		/*
-		 * TODO: (Boletín SocketsUDP) Inicializar atributos que mantienen el estado del
-		 * servidor de directorio: ficheros, etc.)
-		 */
-
+			* TODO: (Boletín SocketsUDP) Inicializar atributos que mantienen el estado del
+			* servidor de directorio: ficheros, etc.)
+			*/
 
 
 		if (NanoFiles.testMode) {
@@ -71,14 +74,15 @@ public class NFDirectoryServer {
 		boolean datagramReceived = false;
 		while (!datagramReceived) {
 			/*
-			 * TODO: (Boletín SocketsUDP) Crear un búfer para recibir datagramas y un
-			 * datagrama asociado al búfer (datagramReceivedFromClient)
-			 */
+				* (Boletín SocketsUDP) Crear un búfer para recibir datagramas y un
+				* datagrama asociado al búfer (datagramReceivedFromClient)
+				*/
+			byte[] recvBuf = new byte[MAX_MSG_SIZE_BYTES];
+			datagramReceivedFromClient = new DatagramPacket(recvBuf, recvBuf.length);
 			/*
-			 * TODO: (Boletín SocketsUDP) Recibimos a través del socket un datagrama
-			 */
-
-
+			* (Boletín SocketsUDP) Recibimos a través del socket un datagrama
+			*/
+			socket.receive(datagramReceivedFromClient);
 
 			if (datagramReceivedFromClient == null) {
 				System.err.println("[testMode] NFDirectoryServer.receiveDatagram: code not yet fully functional.\n"
@@ -97,10 +101,9 @@ public class NFDirectoryServer {
 									+ " of size " + datagramReceivedFromClient.getLength() + " bytes.");
 				}
 			}
-
 		}
 
-		return datagramReceivedFromClient;
+	return datagramReceivedFromClient;
 	}
 
 	public void runTest() throws IOException {
@@ -118,18 +121,32 @@ public class NFDirectoryServer {
 
 	private void sendResponseTestMode(DatagramPacket pkt) throws IOException {
 		/*
-		 * TODO: (Boletín SocketsUDP) Construir un String partir de los datos recibidos
+		 * (Boletín SocketsUDP) Construir un String partir de los datos recibidos
 		 * en el datagrama pkt. A continuación, imprimir por pantalla dicha cadena a
 		 * modo de depuración.
 		 */
-
+		String msg = new String(pkt.getData(), 0, pkt.getLength());
+		System.out.println("Data received: " + msg);
 		/*
-		 * TODO: (Boletín SocketsUDP) Después, usar la cadena para comprobar que su
+		 * (Boletín SocketsUDP) Después, usar la cadena para comprobar que su
 		 * valor es "ping"; en ese caso, enviar como respuesta un datagrama con la
 		 * cadena "pingok". Si el mensaje recibido no es "ping", se informa del error y
 		 * se envía "invalid" como respuesta.
 		 */
-
+		if (msg.equals("ping")) {
+			String response = "pingok";
+			byte[] data = response.getBytes();
+			InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
+			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+			socket.send(responseDatagram);
+		} else {
+			System.err.println("Unexpected message received: \"" + msg + "\"");
+			String response = "invalid";
+			byte[] data = response.getBytes();
+			InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
+			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+			socket.send(responseDatagram);
+		}
 		/*
 		 * TODO: (Boletín Estructura-NanoFiles) Ampliar el código para que, en el caso
 		 * de que la cadena recibida no sea exactamente "ping", comprobar si comienza
@@ -140,11 +157,8 @@ public class NFDirectoryServer {
 		 * en cuyo caso se responderá con "welcome" (en otro caso, "denied").
 		 */
 
-		String messageFromClient = new String(pkt.getData(), 0, pkt.getLength());
-		System.out.println("Data received: " + messageFromClient);
-
-
-
+		//String messageFromClient = new String(pkt.getData(), 0, pkt.getLength());
+		//System.out.println("Data received: " + messageFromClient);
 	}
 
 	public void run() throws IOException {
