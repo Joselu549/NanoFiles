@@ -139,6 +139,30 @@ public class NFDirectoryServer {
 			InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
 			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
 			socket.send(responseDatagram);
+		/*
+		 * (Boletín Estructura-NanoFiles) Ampliar el código para que, en el caso
+		 * de que la cadena recibida no sea exactamente "ping", comprobar si comienza
+		 * por "ping&" (es del tipo "ping&PROTOCOL_ID", donde PROTOCOL_ID será el
+		 * identificador del protocolo diseñado por el grupo de prácticas (ver
+		 * NanoFiles.PROTOCOL_ID). Se debe extraer el "protocol_id" de la cadena
+		 * recibida y comprobar que su valor coincide con el de NanoFiles.PROTOCOL_ID,
+		 * en cuyo caso se responderá con "welcome" (en otro caso, "denied").
+		 */
+		} else if (msg.startsWith(msg)) {
+			String[] parts = msg.split("&");
+			if (parts.length == 2 && parts[1].equals(NanoFiles.PROTOCOL_ID)) {
+				String response = "welcome";
+				byte[] data = response.getBytes();
+				InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
+				DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+				socket.send(responseDatagram);
+			} else {
+				String response = "denied";
+				byte[] data = response.getBytes();
+				InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
+				DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+				socket.send(responseDatagram);
+			}
 		} else {
 			System.err.println("Unexpected message received: \"" + msg + "\"");
 			String response = "invalid";
@@ -147,18 +171,6 @@ public class NFDirectoryServer {
 			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
 			socket.send(responseDatagram);
 		}
-		/*
-		 * TODO: (Boletín Estructura-NanoFiles) Ampliar el código para que, en el caso
-		 * de que la cadena recibida no sea exactamente "ping", comprobar si comienza
-		 * por "ping&" (es del tipo "ping&PROTOCOL_ID", donde PROTOCOL_ID será el
-		 * identificador del protocolo diseñado por el grupo de prácticas (ver
-		 * NanoFiles.PROTOCOL_ID). Se debe extraer el "protocol_id" de la cadena
-		 * recibida y comprobar que su valor coincide con el de NanoFiles.PROTOCOL_ID,
-		 * en cuyo caso se responderá con "welcome" (en otro caso, "denied").
-		 */
-
-		//String messageFromClient = new String(pkt.getData(), 0, pkt.getLength());
-		//System.out.println("Data received: " + messageFromClient);
 	}
 
 	public void run() throws IOException {

@@ -79,7 +79,7 @@ public class NFControllerLogicDir {
 	protected boolean ping() {
 
 		/*
-		 * TODO: (Boletín SocketsUDP) Debe utilizar el DirectoryConnector para
+		 * (Boletín SocketsUDP) Debe utilizar el DirectoryConnector para
 		 * comunicarse con el directorio y tratar de realizar el "ping", informar por
 		 * pantalla y devolver éxito/fracaso de la operación.
 		 */

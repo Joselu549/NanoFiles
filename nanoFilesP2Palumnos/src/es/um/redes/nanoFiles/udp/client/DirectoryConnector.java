@@ -189,7 +189,7 @@ public class DirectoryConnector {
 	public boolean pingDirectoryRaw() {
 		boolean success = false;
 		/*
-		 * TODO: (Boletín EstructuraNanoFiles) Basándose en el código de
+		 * (Boletín EstructuraNanoFiles) Basándose en el código de
 		 * "testSendAndReceive", contactar con el directorio, enviándole nuestro
 		 * PROTOCOL_ID (ver clase NanoFiles). Se deben usar mensajes "en crudo" (sin un
 		 * formato bien definido) para la comunicación.
@@ -200,6 +200,14 @@ public class DirectoryConnector {
 		 * recibida en el datagrama de respuesta es "welcome", imprimir si éxito o
 		 * fracaso. 6.Devolver éxito/fracaso de la operación.
 		 */
+
+		String ping = "ping&" + NanoFiles.PROTOCOL_ID;
+		byte[] pingData = ping.getBytes();
+		byte[] response = sendAndReceiveDatagrams(pingData);
+		String responseString = new String(response);
+		if (responseString.startsWith("welcome")) {
+			success = true;
+		}
 
 		return success;
 	}
