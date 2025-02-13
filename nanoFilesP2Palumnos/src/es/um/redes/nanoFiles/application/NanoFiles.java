@@ -32,6 +32,7 @@ public class NanoFiles {
 
 		db = new FileDatabase(sharedDirname);
 
+		
 		// Creamos el controlador que aceptará y procesará los comandos
 		NFController controller = new NFController(DEFAULT_DIRECTORY_HOSTNAME);
 
