@@ -124,22 +124,10 @@ public class NFDirectoryServer {
 		 * (Boletín SocketsUDP) Construir un String partir de los datos recibidos
 		 * en el datagrama pkt. A continuación, imprimir por pantalla dicha cadena a
 		 * modo de depuración.
-		 */
-		String msg = new String(pkt.getData(), 0, pkt.getLength());
-		System.out.println("Data received: " + msg);
-		/*
 		 * (Boletín SocketsUDP) Después, usar la cadena para comprobar que su
 		 * valor es "ping"; en ese caso, enviar como respuesta un datagrama con la
 		 * cadena "pingok". Si el mensaje recibido no es "ping", se informa del error y
 		 * se envía "invalid" como respuesta.
-		 */
-		if (msg.equals("ping")) {
-			String response = "pingok";
-			byte[] data = response.getBytes();
-			InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
-			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
-			socket.send(responseDatagram);
-		/*
 		 * (Boletín Estructura-NanoFiles) Ampliar el código para que, en el caso
 		 * de que la cadena recibida no sea exactamente "ping", comprobar si comienza
 		 * por "ping&" (es del tipo "ping&PROTOCOL_ID", donde PROTOCOL_ID será el
@@ -148,29 +136,25 @@ public class NFDirectoryServer {
 		 * recibida y comprobar que su valor coincide con el de NanoFiles.PROTOCOL_ID,
 		 * en cuyo caso se responderá con "welcome" (en otro caso, "denied").
 		 */
-		} else if (msg.startsWith(msg)) {
+		String msg = new String(pkt.getData(), 0, pkt.getLength());
+		System.out.println("Data received: " + msg);
+		InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
+		String response = "invalid";
+
+		if (msg.equals("ping"))
+			response = "pingok";
+		else if (msg.startsWith(msg)) {
 			String[] parts = msg.split("&");
-			if (parts.length == 2 && parts[1].equals(NanoFiles.PROTOCOL_ID)) {
-				String response = "welcome";
-				byte[] data = response.getBytes();
-				InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
-				DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
-				socket.send(responseDatagram);
-			} else {
-				String response = "denied";
-				byte[] data = response.getBytes();
-				InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
-				DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
-				socket.send(responseDatagram);
-			}
-		} else {
+			if (parts.length == 2 && parts[1].equals(NanoFiles.PROTOCOL_ID))
+				response = "welcome";
+			else
+				response = "denied";
+		} else
 			System.err.println("Unexpected message received: \"" + msg + "\"");
-			String response = "invalid";
-			byte[] data = response.getBytes();
-			InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
-			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
-			socket.send(responseDatagram);
-		}
+		
+		byte[] data = response.getBytes();
+		DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+		socket.send(responseDatagram);
 	}
 
 	public void run() throws IOException {

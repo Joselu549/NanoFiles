@@ -10,7 +10,7 @@ public class NanoFiles {
 	 * Identificador único para cada grupo de prácticas. TODO: Establecer a un valor
 	 * que combine los DNIs de ambos miembros del grupo de prácticas.
 	 */
-	public static final String PROTOCOL_ID = "123456789A";
+	public static final String PROTOCOL_ID = "49305992H";
 	private static final String DEFAULT_DIRECTORY_HOSTNAME = "localhost";
 	public static String sharedDirname = DEFAULT_SHARED_DIRNAME;
 	public static FileDatabase db;
@@ -18,7 +18,7 @@ public class NanoFiles {
 	 * Flag para pruebas iniciales, desactivado una vez que la comunicación
 	 * cliente-directorio está implementada y probada.
 	 */
-	public static boolean testMode = false;
+	public static boolean testMode = true;
 
 	public static void main(String[] args) {
 		// Comprobamos los argumentos

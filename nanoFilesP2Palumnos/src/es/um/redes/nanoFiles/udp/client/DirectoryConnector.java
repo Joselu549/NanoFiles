@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
+import java.util.Arrays;
 
 import es.um.redes.nanoFiles.application.NanoFiles;
 import es.um.redes.nanoFiles.udp.message.DirMessage;
@@ -114,14 +115,16 @@ public class DirectoryConnector {
 		try {
 			socket.setSoTimeout(TIMEOUT);
 			socket.receive(packetToReceive);
-			response = packetToReceive.getData();
+			response = Arrays.copyOf(responseData, packetToReceive.getLength());
+			//response = packetToReceive.getData();
 		} catch (SocketTimeoutException e) {
 			System.err.println("Timeout reached. Retransmitting max " + MAX_NUMBER_OF_ATTEMPTS + " times...");
 			for (int i = 0; i < MAX_NUMBER_OF_ATTEMPTS; i++) {		
 				try {
 					socket.send(packetToSend);
 					socket.receive(packetToReceive);
-					response = packetToReceive.getData();
+					response = Arrays.copyOf(responseData, packetToReceive.getLength());
+					//response = packetToReceive.getData();
 					break;
 				} catch (IOException e1) {
 					e1.printStackTrace();
@@ -142,7 +145,6 @@ public class DirectoryConnector {
 		 * SocketTimeoutException es más concreta que IOException.
 		 */
 
-		// TODO: Preguntar este if dado
 		if (response != null && response.length == responseData.length) {
 			System.err.println("Your response is as large as the datagram reception buffer!!\n"
 					+ "You must extract from the buffer only the bytes that belong to the datagram!");
