@@ -9,8 +9,8 @@ public class DirMessageOps {
 	 */
 	public static final String OPERATION_INVALID = "invalid_operation";
 	public static final String OPERATION_PING = "ping";
-
-
+	public static final String OPERATION_PING_OK = "pingOk";
+	public static final String OPERATION_PING_BAD = "pingBad";
 
 
 }

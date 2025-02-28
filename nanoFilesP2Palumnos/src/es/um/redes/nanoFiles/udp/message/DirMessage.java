@@ -1,8 +1,4 @@
 package es.um.redes.nanoFiles.udp.message;
-
-
-
-
 /**
  * Clase que modela los mensajes del protocolo de comunicación entre pares para
  * implementar el explorador de ficheros remoto (servidor de ficheros). Estos
@@ -28,7 +24,7 @@ public class DirMessage {
 	 * (formato campo:valor)
 	 */
 
-
+	private static final String FIELDNAME_PROTOCOLID = "protocolID";
 
 	/**
 	 * Tipo del mensaje, de entre los tipos definidos en PeerMessageOps.
@@ -43,9 +39,6 @@ public class DirMessage {
 	 * los campos de los diferentes mensajes de este protocolo.
 	 */
 
-
-
-
 	public DirMessage(String op) {
 		operation = op;
 	}
@@ -56,8 +49,10 @@ public class DirMessage {
 	 * (campos del mensaje)
 	 */
 
-
-
+	public DirMessage(String op, String id) {
+		operation = op;
+		protocolId = id;
+	}
 
 	public String getOperation() {
 		return operation;
@@ -78,14 +73,8 @@ public class DirMessage {
 	}
 
 	public String getProtocolId() {
-
-
-
 		return protocolId;
 	}
-
-
-
 
 	/**
 	 * Método que convierte un mensaje codificado como una cadena de caracteres, a
@@ -109,32 +98,29 @@ public class DirMessage {
 		// Local variables to save data during parsing
 		DirMessage m = null;
 
-
-
 		for (String line : lines) {
 			int idx = line.indexOf(DELIMITER); // Posición del delimitador
-			String fieldName = line.substring(0, idx).toLowerCase(); // minúsculas
+			String fieldName = line.substring(0, idx);//.toLowerCase(); // minúsculas
 			String value = line.substring(idx + 1).trim();
 
 			switch (fieldName) {
-			case FIELDNAME_OPERATION: {
-				assert (m == null);
-				m = new DirMessage(value);
-				break;
-			}
+				case FIELDNAME_OPERATION: {
+					assert (m == null);
+					m = new DirMessage(value);
+					break;
+				}
 
-
-
-
-			default:
-				System.err.println("PANIC: DirMessage.fromString - message with unknown field name " + fieldName);
-				System.err.println("Message was:\n" + message);
-				System.exit(-1);
+				case FIELDNAME_PROTOCOLID: {
+					m.setProtocolID(value);
+					break;
+				}
+				// TODO: Se añaden los campos que utilicemos
+				default:
+					System.err.println("PANIC: DirMessage.fromString - message with unknown field name " + fieldName);
+					System.err.println("Message was:\n" + message);
+					System.exit(-1);
 			}
 		}
-
-
-
 
 		return m;
 	}
@@ -156,7 +142,12 @@ public class DirMessage {
 		 * valores de los atributos del objeto.
 		 */
 
-
+		switch (operation) {
+			case DirMessageOps.OPERATION_PING: {
+				sb.append(FIELDNAME_PROTOCOLID + DELIMITER + protocolId + END_LINE);
+				break;
+			}
+		}	
 
 		sb.append(END_LINE); // Marcamos el final del mensaje
 		return sb.toString();

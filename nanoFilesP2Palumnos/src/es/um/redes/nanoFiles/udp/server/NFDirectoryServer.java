@@ -180,7 +180,10 @@ public class NFDirectoryServer {
 		 * servidor.
 		 */
 
-
+		String responseAsString = new String(pkt.getData(), 0, pkt.getLength());
+		System.out.println("Data received: " + responseAsString);
+		DirMessage receivedMessage = DirMessage.fromString(responseAsString);
+		InetSocketAddress clientAddr = (InetSocketAddress) pkt.getSocketAddress();
 
 		/*
 		 * TODO: Una vez construido un objeto DirMessage con el contenido del datagrama
@@ -188,6 +191,9 @@ public class NFDirectoryServer {
 		 * consecuencia, enviando uno u otro tipo de mensaje en respuesta.
 		 */
 		String operation = DirMessageOps.OPERATION_INVALID; // TODO: Cambiar!
+		if (receivedMessage != null) {
+			operation = receivedMessage.getOperation();
+		}
 
 		/*
 		 * TODO: (Boletín MensajesASCII) Construir un objeto DirMessage (msgToSend) con
@@ -198,41 +204,45 @@ public class NFDirectoryServer {
 		 * enviar como respuesta (operation, etc.)
 		 */
 
-
-
-
+		DirMessage msgToSend = null;
 
 		switch (operation) {
-		case DirMessageOps.OPERATION_PING: {
+			case DirMessageOps.OPERATION_PING: {
+				/*
+				* TODO: (Boletín MensajesASCII) Comprobamos si el protocolId del mensaje del
+				* cliente coincide con el nuestro.
+				*/
+
+				String protocolId = receivedMessage.getProtocolId();
+
+				/*
+				* TODO: (Boletín MensajesASCII) Construimos un mensaje de respuesta que indique
+				* el éxito/fracaso del ping (compatible, incompatible), y lo devolvemos como
+				* resultado del método.
+				*/
+
+				if (protocolId.equals(NanoFiles.PROTOCOL_ID)) {
+					msgToSend = new DirMessage(DirMessageOps.OPERATION_PING_OK);
+				} else {
+					msgToSend = new DirMessage(DirMessageOps.OPERATION_PING_BAD);
+				}
+
+				/*
+				* TODO: (Boletín MensajesASCII) Imprimimos por pantalla el resultado de
+				* procesar la petición recibida (éxito o fracaso) con los datos relevantes, a
+				* modo de depuración en el servidor
+				*/
+
+				System.out.println("Ping request processed: " + msgToSend.getOperation());
+
+				break;
+			}
 
 
 
-
-			/*
-			 * TODO: (Boletín MensajesASCII) Comprobamos si el protocolId del mensaje del
-			 * cliente coincide con el nuestro.
-			 */
-			/*
-			 * TODO: (Boletín MensajesASCII) Construimos un mensaje de respuesta que indique
-			 * el éxito/fracaso del ping (compatible, incompatible), y lo devolvemos como
-			 * resultado del método.
-			 */
-			/*
-			 * TODO: (Boletín MensajesASCII) Imprimimos por pantalla el resultado de
-			 * procesar la petición recibida (éxito o fracaso) con los datos relevantes, a
-			 * modo de depuración en el servidor
-			 */
-
-
-
-			break;
-		}
-
-
-
-		default:
-			System.err.println("Unexpected message operation: \"" + operation + "\"");
-			System.exit(-1);
+			default:
+				System.err.println("Unexpected message operation: \"" + operation + "\"");
+				System.exit(-1);
 		}
 
 		/*
@@ -241,7 +251,13 @@ public class NFDirectoryServer {
 		 * codifica el string y finalmente enviarlos en un datagrama
 		 */
 
-
+		if (msgToSend != null) {
+			String msgToSendAsString = msgToSend.toString();
+			System.out.println("Sending response: " + msgToSendAsString);
+			byte[] data = msgToSendAsString.getBytes();
+			DatagramPacket responseDatagram = new DatagramPacket(data, data.length, clientAddr);
+			socket.send(responseDatagram);
+		}
 
 	}
 }

@@ -1,0 +1,88 @@
+MENSAJES ASOCIADOS AL COMANDO PING
+----------------------------------
+
+Mensaje "Solicitud de ping":
+    · Operación             : ping
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : protocolID
+    · Finalidad             : Comprobar que el directorio está activo y a la escucha
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver pingOk en caso de que el protocolID=49305992H, delvolver pingBad en cualquier otro caso
+    · Formato               :
+
+        operation: ping\n
+        protocolID: 49305992H\n
+        \n
+    · Se envía              : operation:ping\nprotocolID:49305992H\n\n
+
+Mensaje "Respuesta de ping correcto":
+    · Operación             : pingOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ninguno
+    · Finalidad             : Dar a conocer que Directory está activo y usa el mismo protocolo que NanoFiles
+    · Condiciones de envío  : Recibir previamente mensaje "ping" de NanoFiles
+    · Acciones al recibirlo : Responer con mensaje "pingOk"
+    · Formato               :
+
+        operation: pingOk\n
+        \n
+    · Se envía              : operation:pingOk\n\n
+
+
+Mensaje "Respuesta de ping incorrecto":
+    · Operación             : pingBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ninguno
+    · Finalidad             : Dar a conocer que NanoFiles y Directory no usan el mismo protocolo
+    · Condiciones de envío  : Recibir previamente mensaje "ping" de NanoFiles
+    · Acciones al recibirlo : Responder con mensaje "pingBad"
+    · Formato               :
+
+        operation: pingOk\n
+        \n
+    · Se envía              : operation:pingBad\n\n
+
+MENSAJES ASOCIADOS AL COMANDO FILELIST
+----------------------------------
+
+Mensaje "Listar ficheros publicados en el directorio":
+    · Operación             : 
+    · Emisor                : 
+    · Receptor              : 
+    · Campo/s adicionales   : 
+    · Finalidad             : 
+    · Condiciones de envío  : 
+    · Acciones al recibirlo : 
+    · Formato               : 
+    · Se envía              : 
+
+MENSAJES ASOCIADOS AL COMANDO SERVE
+----------------------------------
+
+Mensaje "Comenzar a servir ficheros en el puerto 10000/TCP":
+    · Operación             : 
+    · Emisor                : 
+    · Receptor              : 
+    · Campo/s adicionales   : 
+    · Finalidad             : 
+    · Condiciones de envío  : 
+    · Acciones al recibirlo : 
+    · Formato               : 
+    · Se envía              : 
+
+MENSAJES ASOCIADOS AL COMANDO DOWNLOAD
+----------------------------------
+
+Mensaje "Descargar un fichero":
+    · Operación             : 
+    · Emisor                : 
+    · Receptor              : 
+    · Campo/s adicionales   : 
+    · Finalidad             : 
+    · Condiciones de envío  : 
+    · Acciones al recibirlo : 
+    · Formato               : 
+    · Se envía              : 

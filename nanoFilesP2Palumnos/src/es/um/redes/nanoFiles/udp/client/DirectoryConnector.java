@@ -233,6 +233,17 @@ public class DirectoryConnector {
 		 * 6.Extraer datos del objeto DirMessage y procesarlos 7.Devolver éxito/fracaso
 		 * de la operación
 		 */
+		DirMessage ping = new DirMessage(DirMessageOps.OPERATION_PING, NanoFiles.PROTOCOL_ID);
+		byte[] requestData = ping.toString().getBytes();
+		byte[] response = sendAndReceiveDatagrams(requestData);
+		if (response != null) {
+			String responseAsString = new String(response, 0 ,response.length);
+			System.out.println("Receiving... " + responseAsString);
+			DirMessage responseMessage = DirMessage.fromString(responseAsString);
+			if (responseMessage != null && responseMessage.getOperation().equals(DirMessageOps.OPERATION_PING_OK)) {
+				success = true;
+			}
+		}
 
 		return success;
 	}
