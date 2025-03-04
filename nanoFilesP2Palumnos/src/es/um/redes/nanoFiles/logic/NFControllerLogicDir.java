@@ -116,7 +116,7 @@ public class NFControllerLogicDir {
    */
   protected boolean registerFileServer(int serverPort, FileInfo[] filelist) {
     /*
-     * TODO: Comunicarse con el directorio (a través del directoryConnector) para enviar la lista de
+     * Comunicarse con el directorio (a través del directoryConnector) para enviar la lista de
      * ficheros servidos por este peer. Los ficheros de la carpeta local compartida están
      * disponibles en NanoFiles.db). Devolver éxito/fracaso de la operación.
      */

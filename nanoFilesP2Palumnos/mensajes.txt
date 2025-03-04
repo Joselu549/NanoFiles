@@ -1,16 +1,15 @@
-MENSAJES ASOCIADOS AL COMANDO PING
+MENSAJES ASOCIADOS AL COMANDO PING (✅)
 ----------------------------------
 
 Mensaje "Solicitud de ping":
     · Operación             : ping
     · Emisor                : NanoFiles
     · Receptor              : Directory
-    · Campo/s adicionales   : protocolID
+    · Campo/s adicionales   : protocolID --> ID de protocolo para que solo acepte las comunicaciones correctas
     · Finalidad             : Comprobar que el directorio está activo y a la escucha
     · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
     · Acciones al recibirlo : Devolver pingOk en caso de que el protocolID=49305992H, delvolver pingBad en cualquier otro caso
     · Formato               :
-
         operation: ping\n
         protocolID: 49305992H\n
         \n
@@ -20,12 +19,11 @@ Mensaje "Respuesta de ping correcto":
     · Operación             : pingOk
     · Emisor                : Directory
     · Receptor              : NanoFiles
-    · Campo/s adicionales   : ninguno
+    · Campo/s adicionales   : ❌
     · Finalidad             : Dar a conocer que Directory está activo y usa el mismo protocolo que NanoFiles
     · Condiciones de envío  : Recibir previamente mensaje "ping" de NanoFiles
     · Acciones al recibirlo : Responer con mensaje "pingOk"
     · Formato               :
-
         operation: pingOk\n
         \n
     · Se envía              : operation:pingOk\n\n
@@ -35,54 +33,134 @@ Mensaje "Respuesta de ping incorrecto":
     · Operación             : pingBad
     · Emisor                : Directory
     · Receptor              : NanoFiles
-    · Campo/s adicionales   : ninguno
+    · Campo/s adicionales   : ❌
     · Finalidad             : Dar a conocer que NanoFiles y Directory no usan el mismo protocolo
     · Condiciones de envío  : Recibir previamente mensaje "ping" de NanoFiles
     · Acciones al recibirlo : Responder con mensaje "pingBad"
-    · Formato               :
-
-        operation: pingOk\n
+    · Formato               
+        operation: pingBad\n
         \n
     · Se envía              : operation:pingBad\n\n
 
-MENSAJES ASOCIADOS AL COMANDO FILELIST
-----------------------------------
+MENSAJES ASOCIADOS AL COMANDO FILELIST (✅)
+--------------------------------------
 
 Mensaje "Listar ficheros publicados en el directorio":
-    · Operación             : 
-    · Emisor                : 
-    · Receptor              : 
-    · Campo/s adicionales   : 
-    · Finalidad             : 
-    · Condiciones de envío  : 
-    · Acciones al recibirlo : 
+    · Operación             : filelist
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Recuperar la lista de ficheros publicados en el directorio 
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver la lista de ficheros publicados
     · Formato               : 
-    · Se envía              : 
+        operation: filelist\n
+        \n
+    · Se envía              : operation:filelist\n\n
 
-MENSAJES ASOCIADOS AL COMANDO SERVE
-----------------------------------
-
-Mensaje "Comenzar a servir ficheros en el puerto 10000/TCP":
-    · Operación             : 
-    · Emisor                : 
-    · Receptor              : 
-    · Campo/s adicionales   : 
-    · Finalidad             : 
-    · Condiciones de envío  : 
-    · Acciones al recibirlo : 
+Mensaje "Lista de ficheros en el directorio":
+    · Operación             : filelistOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : fileList --> Lista de ficheros publicados en el directorio, indicando para cada uno su nombre, tamaño y hash
+                              separados por el símbolo %
+    · Finalidad             : Devolver la lista de ficheros publicados a NanoFiles 
+    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
+    · Acciones al recibirlo : Responder con la lista de ficheros publicados
     · Formato               : 
-    · Se envía              : 
+        operation: filelistOk\n
+        fileList: fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n
+        \n
+    · Se envía              : operation:filelist\nfileList:fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n\n
 
-MENSAJES ASOCIADOS AL COMANDO DOWNLOAD
-----------------------------------
+MENSAJES ASOCIADOS AL COMANDO DOWNLOAD (✅)
+--------------------------------------
 
 Mensaje "Descargar un fichero":
-    · Operación             : 
-    · Emisor                : 
-    · Receptor              : 
-    · Campo/s adicionales   : 
-    · Finalidad             : 
-    · Condiciones de envío  : 
-    · Acciones al recibirlo : 
+    · Operación             : download
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : fileHash --> Hash del fichero a descargar por los servidores disponibles
+    · Finalidad             : Descargar fichero con hash=fileHash de todos los servidores disponibles
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver los servers disponibles que tienen un fichero con hash=fileHash
     · Formato               : 
-    · Se envía              : 
+        operation: download\n
+        fileHash: HaShDeUnFiChErO\n
+        \n
+    · Se envía              : operation:download\nfileHash:HaShDeUnFiChErO\n\n
+  
+Mensaje "Lista de servers con fichero":
+    · Operación             : downloadServerList
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : serverList --> Lista de servidores disponibles que tienen el fichero con hash=fileHash del mensaje anterior
+    · Finalidad             : Descargar fichero con hash=fileHash de todos los servidores disponibles separados por %
+    · Condiciones de envío  : Recibir el mensaje "download"
+    · Acciones al recibirlo : Devolver los servers disponibles que tienen un fichero con hash=fileHash
+    · Formato               : 
+        operation: downloadServerList\n
+        serverList: IPServer1%Puerto1%%IPServer2%Puerto2\n
+        \n
+    · Se envía              : operation:download\nserverList:IPServer1%Puerto1%%IPServer2%Puerto2\n\n
+
+Mensaje "No existe fichero":
+    · Operación             : downloadServerBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que el fichero solicitado no existe en el directorio
+    · Condiciones de envío  : Recibir el mensaje "download"
+    · Acciones al recibirlo : Devolver los servers disponibles que tienen un fichero con hash=fileHash
+    · Formato               : 
+        operation: downloadServerBad
+  \n
+        \n
+    · Se envía              : operation:downloadServerBad\n\n
+
+MENSAJES ASOCIADOS AL COMANDO SERVE (✅)
+-----------------------------------
+
+Mensaje "Comenzar a servir ficheros en el puerto *port*/TCP":
+    · Operación             : serve
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : port --> Puerto en el que se va a servir los ficheros
+                              fileList --> Lista de ficheros a servir (nombre%tamaño%hash)
+    · Finalidad             : Empezar a servir ficheros en el puerto *port*TCP
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver "serveOk" si el directorio tiene registrado a este peer como servidor y acepta
+                              la lista de ficheros o "serveBad
+                        " en caso contrario
+    · Formato               : 
+        operation: serve\n
+        port: 1234\n
+        fileList: fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n
+        \n
+    · Se envía              : operation:serve\n\n
+
+Mensaje "Sirviendo ficheros correctamente puerto *port*/TCP":
+    · Operación             : serveOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que se está sirviendo los ficheros correctamente
+    · Condiciones de envío  : Recibir mensaje "serve"
+    · Acciones al recibirlo : Responder con mensaje "serveOk"
+    · Formato               : 
+        operation: serveOk\n
+        \n
+    · Se envía              : operation:serveOk\n\n
+
+Mensaje "Error al servir ficheros en el puerto *port*/TCP":
+    · Operación             : serveBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que se está sirviendo los ficheros correctamente
+    · Condiciones de envío  : Recibir mensaje "serve"
+    · Acciones al recibirlo : Responder con mensaje "serveBad"
+    · Formato               : 
+        operation: serveBad\n
+        \n
+    · Se envía              : operation:serveBad\n\n

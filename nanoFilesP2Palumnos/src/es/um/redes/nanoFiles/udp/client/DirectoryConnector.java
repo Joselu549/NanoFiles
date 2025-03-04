@@ -217,7 +217,7 @@ public class DirectoryConnector {
   public boolean pingDirectory() {
     boolean success = false;
     /*
-     * TODO: (Boletín MensajesASCII) Hacer ping al directorio 1.Crear el mensaje a enviar (objeto
+     * (Boletín MensajesASCII) Hacer ping al directorio 1.Crear el mensaje a enviar (objeto
      * DirMessage) con atributos adecuados (operation, etc.) NOTA: Usar como operaciones las
      * constantes definidas en la clase DirMessageOps : 2.Convertir el objeto DirMessage a enviar a
      * un string (método toString) 3.Crear un datagrama con los bytes en que se codifica la cadena :
@@ -228,10 +228,12 @@ public class DirectoryConnector {
     DirMessage ping = new DirMessage(DirMessageOps.OPERATION_PING, NanoFiles.PROTOCOL_ID);
     byte[] requestData = ping.toString().getBytes();
     byte[] response = sendAndReceiveDatagrams(requestData);
+
     if (response != null) {
       String responseAsString = new String(response, 0, response.length);
       System.out.println("Receiving... " + responseAsString);
       DirMessage responseMessage = DirMessage.fromString(responseAsString);
+
       if (responseMessage != null
           && responseMessage.getOperation().equals(DirMessageOps.OPERATION_PING_OK)) {
         success = true;
@@ -255,8 +257,6 @@ public class DirectoryConnector {
 
     // TODO: Ver TODOs en pingDirectory y seguir esquema similar
 
-
-
     return success;
   }
 
@@ -271,8 +271,6 @@ public class DirectoryConnector {
   public FileInfo[] getFileList() {
     FileInfo[] filelist = new FileInfo[0];
     // TODO: Ver TODOs en pingDirectory y seguir esquema similar
-
-
 
     return filelist;
   }
