@@ -52,13 +52,13 @@ Mensaje "Listar ficheros publicados en el directorio":
     · Campo/s adicionales   : ❌
     · Finalidad             : Recuperar la lista de ficheros publicados en el directorio 
     · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
-    · Acciones al recibirlo : Devolver la lista de ficheros publicados
+    · Acciones al recibirlo : Devolver filelistOk con la lista de ficheros o filelistBad si hay algún error
     · Formato               : 
         operation: filelist\n
         \n
     · Se envía              : operation:filelist\n\n
 
-Mensaje "Lista de ficheros en el directorio":
+Mensaje "Respuesta de lista de ficheros en el directorio":
     · Operación             : filelistOk
     · Emisor                : Directory
     · Receptor              : NanoFiles
@@ -72,6 +72,19 @@ Mensaje "Lista de ficheros en el directorio":
         fileList: fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n
         \n
     · Se envía              : operation:filelist\nfileList:fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n\n
+
+Mensaje "Respuesta de lista de ficheros errónea":
+    · Operación             : filelistBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que no se ha podido recuperar la lista de ficheros o que ha surgido algún error
+    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
+    · Acciones al recibirlo : Responder con la lista de ficheros publicados
+    · Formato               : 
+        operation: filelistBad\n
+        \n
+    · Se envía              : operation:filelistBad\n\n
 
 MENSAJES ASOCIADOS AL COMANDO DOWNLOAD (✅)
 --------------------------------------

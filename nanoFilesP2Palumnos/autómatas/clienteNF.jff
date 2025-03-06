@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!--Created with JFLAP 6.4.--><structure>
+	<type>fa</type>
+	<automaton>
+		<!--The list of states.-->
+		<state id="0" name="q0">
+			<x>159.0</x>
+			<y>139.0</y>
+			<label>OFFLINE</label>
+			<initial/>
+		</state>
+		<state id="1" name="q1">
+			<x>351.0</x>
+			<y>140.0</y>
+			<label>wait_ack_ping</label>
+		</state>
+		<state id="2" name="q2">
+			<x>541.0</x>
+			<y>141.0</y>
+			<label>retry_ping</label>
+		</state>
+		<state id="3" name="q3">
+			<x>164.0</x>
+			<y>375.0</y>
+			<label>ONLINE</label>
+		</state>
+		<state id="4" name="q4">
+			<x>58.0</x>
+			<y>265.0</y>
+			<label>FINISHED</label>
+			<final/>
+		</state>
+		<state id="5" name="q5">
+			<x>539.0</x>
+			<y>258.0</y>
+			<label>wait_ack_requestFileList</label>
+		</state>
+		<state id="6" name="q6">
+			<x>828.0</x>
+			<y>256.0</y>
+			<label>retry_requestFileList</label>
+		</state>
+		<!--The list of transitions.-->
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>rcv(filelistOk)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>6</to>
+			<read>TIMEOUT</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>TIMEOUT_N</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>3</to>
+			<read>rcv(pingOk)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>5</to>
+			<read>snd(filelist)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>1</to>
+			<read>snd(ping)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>rcv(pingBad)</read>
+		</transition>
+		<transition>
+			<from>6</from>
+			<to>5</to>
+			<read>snd(filelist)</read>
+		</transition>
+		<transition>
+			<from>2</from>
+			<to>1</to>
+			<read>snd(ping)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>4</to>
+			<read>quit</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>quit</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>rcv(filelistBad)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>2</to>
+			<read>TIMEOUT</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>TIMEOUT_N</read>
+		</transition>
+	</automaton>
+</structure>
