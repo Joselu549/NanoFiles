@@ -3,32 +3,57 @@
 	<automaton>
 		<!--The list of states.-->
 		<state id="0" name="q0">
-			<x>195.0</x>
-			<y>279.0</y>
+			<x>107.0</x>
+			<y>387.0</y>
 			<label>LISTENING</label>
 			<initial/>
 			<final/>
 		</state>
 		<state id="1" name="q1">
-			<x>443.0</x>
-			<y>87.0</y>
+			<x>504.0</x>
+			<y>55.0</y>
 			<label>process_ping</label>
 		</state>
 		<state id="2" name="q2">
-			<x>445.0</x>
-			<y>279.0</y>
+			<x>506.0</x>
+			<y>222.0</y>
 			<label>process_requestFileList</label>
+		</state>
+		<state id="3" name="q3">
+			<x>500.0</x>
+			<y>389.0</y>
+			<label>process_download</label>
+		</state>
+		<state id="4" name="q4">
+			<x>496.0</x>
+			<y>542.0</y>
+			<label>process_upload</label>
+		</state>
+		<state id="5" name="q5">
+			<x>482.0</x>
+			<y>717.0</y>
+			<label>process_serve</label>
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>0</from>
-			<to>1</to>
-			<read>rcv(ping)</read>
+			<from>1</from>
+			<to>0</to>
+			<read>snd(pingBad)</read>
 		</transition>
 		<transition>
 			<from>0</from>
-			<to>2</to>
-			<read>rcv(filelist)</read>
+			<to>3</to>
+			<read>rcv(download)</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>0</to>
+			<read>snd(uploadBad)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>0</to>
+			<read>snd(serveBad)</read>
 		</transition>
 		<transition>
 			<from>2</from>
@@ -36,19 +61,49 @@
 			<read>snd(filelistOk)</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>0</to>
-			<read>snd(pingOk)</read>
+			<from>0</from>
+			<to>2</to>
+			<read>rcv(filelist)</read>
 		</transition>
 		<transition>
-			<from>1</from>
+			<from>0</from>
+			<to>1</to>
+			<read>rcv(ping)</read>
+		</transition>
+		<transition>
+			<from>5</from>
 			<to>0</to>
-			<read>snd(pingBad)</read>
+			<read>snd(serveOk)</read>
 		</transition>
 		<transition>
 			<from>2</from>
 			<to>0</to>
 			<read>snd(filelistBad)</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>snd(pingOk)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>0</to>
+			<read>snd(downloadServerList)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>5</to>
+			<read>rcv(serve)</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>4</to>
+			<read>rcv(upload)</read>
+		</transition>
+		<transition>
+			<from>4</from>
+			<to>0</to>
+			<read>snd(uploadOk)</read>
 		</transition>
 	</automaton>
 </structure>

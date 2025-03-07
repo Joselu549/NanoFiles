@@ -1,5 +1,7 @@
+||---------- MENSAJES SIN MEJORAS ----------||
+
 MENSAJES ASOCIADOS AL COMANDO PING (✅)
-----------------------------------
+---------------------------------------
 
 Mensaje "Solicitud de ping":
     · Operación             : ping
@@ -42,52 +44,8 @@ Mensaje "Respuesta de ping incorrecto":
         \n
     · Se envía              : operation:pingBad\n\n
 
-MENSAJES ASOCIADOS AL COMANDO FILELIST (✅)
---------------------------------------
-
-Mensaje "Listar ficheros publicados en el directorio":
-    · Operación             : filelist
-    · Emisor                : NanoFiles
-    · Receptor              : Directory
-    · Campo/s adicionales   : ❌
-    · Finalidad             : Recuperar la lista de ficheros publicados en el directorio 
-    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
-    · Acciones al recibirlo : Devolver filelistOk con la lista de ficheros o filelistBad si hay algún error
-    · Formato               : 
-        operation: filelist\n
-        \n
-    · Se envía              : operation:filelist\n\n
-
-Mensaje "Respuesta de lista de ficheros en el directorio":
-    · Operación             : filelistOk
-    · Emisor                : Directory
-    · Receptor              : NanoFiles
-    · Campo/s adicionales   : fileList --> Lista de ficheros publicados en el directorio, indicando para cada uno su nombre, tamaño y hash
-                              separados por el símbolo %
-    · Finalidad             : Devolver la lista de ficheros publicados a NanoFiles 
-    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
-    · Acciones al recibirlo : Responder con la lista de ficheros publicados
-    · Formato               : 
-        operation: filelistOk\n
-        fileList: fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n
-        \n
-    · Se envía              : operation:filelist\nfileList:fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n\n
-
-Mensaje "Respuesta de lista de ficheros errónea":
-    · Operación             : filelistBad
-    · Emisor                : Directory
-    · Receptor              : NanoFiles
-    · Campo/s adicionales   : ❌
-    · Finalidad             : Informar de que no se ha podido recuperar la lista de ficheros o que ha surgido algún error
-    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
-    · Acciones al recibirlo : Responder con la lista de ficheros publicados
-    · Formato               : 
-        operation: filelistBad\n
-        \n
-    · Se envía              : operation:filelistBad\n\n
-
 MENSAJES ASOCIADOS AL COMANDO DOWNLOAD (✅)
---------------------------------------
+-------------------------------------------
 
 Mensaje "Descargar un fichero":
     · Operación             : download
@@ -115,7 +73,7 @@ Mensaje "Lista de servers con fichero":
         operation: downloadServerList\n
         serverList: IPServer1%Puerto1%%IPServer2%Puerto2\n
         \n
-    · Se envía              : operation:download\nserverList:IPServer1%Puerto1%%IPServer2%Puerto2\n\n
+    · Se envía              : operation:downloadServerList\nserverList:IPServer1%Puerto1%%IPServer2%Puerto2\n\n
 
 Mensaje "No existe fichero":
     · Operación             : downloadServerBad
@@ -126,13 +84,58 @@ Mensaje "No existe fichero":
     · Condiciones de envío  : Recibir el mensaje "download"
     · Acciones al recibirlo : Devolver los servers disponibles que tienen un fichero con hash=fileHash
     · Formato               : 
-        operation: downloadServerBad
-  \n
+        operation: downloadServerBad\n
         \n
     · Se envía              : operation:downloadServerBad\n\n
 
-MENSAJES ASOCIADOS AL COMANDO SERVE (✅)
------------------------------------
+||---------- MENSAJES CON MEJORAS ----------||
+
+MENSAJES ASOCIADOS AL COMANDO FILELIST + SERVIDORES QUE LO SIRVEN (✅)
+----------------------------------------------------------------------
+
+Mensaje "Listar ficheros publicados en el directorio":
+    · Operación             : filelist
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Recuperar la lista de ficheros publicados en el directorio 
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver filelistOk con la lista de ficheros o filelistBad si hay algún error
+    · Formato               : 
+        operation: filelist\n
+        \n
+    · Se envía              : operation:filelist\n\n
+
+Mensaje "Respuesta de lista de ficheros en el directorio":
+    · Operación             : filelistOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : fileList --> Lista de ficheros publicados en el directorio, indicando para cada uno su nombre, tamaño, hash
+                              y servidor que lo sirve (IP:puerto) separados por el símbolo %
+    · Finalidad             : Devolver la lista de ficheros publicados a NanoFiles 
+    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
+    · Acciones al recibirlo : Responder con la lista de ficheros publicados
+    · Formato               : 
+        operation: filelistOk\n
+        fileList: fichero1%tam1%HaShFiChErO1%IPServer1%Puerto1%%fichero2%tam2%HaShFiChErO2%IPServer2%Puerto2\n
+        \n
+    · Se envía              : operation:filelist\nfileList:fichero1%tam1%HaShFiChErO1%%fichero2%tam2%HaShFiChErO2\n\n
+
+Mensaje "Respuesta de lista de ficheros errónea":
+    · Operación             : filelistBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que no se ha podido recuperar la lista de ficheros o que ha surgido algún error
+    · Condiciones de envío  : Recibir mensaje "filelist" de NanoFiles
+    · Acciones al recibirlo : Responder con la lista de ficheros publicados
+    · Formato               : 
+        operation: filelistBad\n
+        \n
+    · Se envía              : operation:filelistBad\n\n
+
+MENSAJES ASOCIADOS AL COMANDO SERVE (CON PUERTO EFÍMERO) (✅)
+-------------------------------------------------------------
 
 Mensaje "Comenzar a servir ficheros en el puerto *port*/TCP":
     · Operación             : serve
@@ -143,8 +146,7 @@ Mensaje "Comenzar a servir ficheros en el puerto *port*/TCP":
     · Finalidad             : Empezar a servir ficheros en el puerto *port*TCP
     · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
     · Acciones al recibirlo : Devolver "serveOk" si el directorio tiene registrado a este peer como servidor y acepta
-                              la lista de ficheros o "serveBad
-                        " en caso contrario
+                              la lista de ficheros o "serveBad" en caso contrario
     · Formato               : 
         operation: serve\n
         port: 1234\n
@@ -177,3 +179,92 @@ Mensaje "Error al servir ficheros en el puerto *port*/TCP":
         operation: serveBad\n
         \n
     · Se envía              : operation:serveBad\n\n
+
+MENSAJES ASOCIADOS AL COMANDO QUIT (✅)
+---------------------------------------
+
+Mensaje "Salir del directorio":
+    · Operación             : quit
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que mis ficheros se deben de dar de baja
+    · Condiciones de envío  : Recibir mensaje "serve"
+    · Acciones al recibirlo : Responder con mensaje "quitOk" o "quitBad"
+    · Formato               : 
+        operation: quit\n
+        \n
+    · Se envía              : operation:quit\n\n
+
+Mensaje "Salir del directorio correcto":
+    · Operación             : quitOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que se han dado de baja los ficheros correctamente
+    · Condiciones de envío  : Recibir mensaje "quit"
+    · Acciones al recibirlo : Responder con mensaje "quitOk"
+    · Formato               : 
+        operation: quitOk\n
+        \n
+    · Se envía              : operation:quitOk\n\n
+
+Mensaje "Error al salir del directorio":
+    · Operación             : quitBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que no se han dado de baja los ficheros correctamente
+    · Condiciones de envío  : Recibir mensaje "quit"
+    · Acciones al recibirlo : Responder con mensaje "quitBad"
+    · Formato               : 
+        operation: quitBad\n
+        \n
+    · Se envía              : operation:quitBad\n\n
+
+MENSAJES ASOCIADOS AL COMANDO UPLOAD (✅)
+-----------------------------------------
+
+Mensaje "subir un fichero a otro servidor":
+    · Operación             : upload
+    · Emisor                : NanoFiles
+    · Receptor              : Directory
+    · Campo/s adicionales   : fileHash --> hash del fichero que quiere compartir
+                              server --> IP%puerto del server al que quieres compartir el fichero
+    · Finalidad             : Subir uno de los cheros compartidos por un peer a otro servidor, quien aceptará
+                              el fichero entrante siempre que no lo tenga ya entre sus cheros disponibles.
+    · Condiciones de envío  : El directorio tiene que estar activo y a la escucha con el protocolID=49305992H
+    · Acciones al recibirlo : Devolver uploadOk si se ha compartido correctamente o uploadBad en caso contrario
+    · Formato               : 
+        operation: upload\n
+        fileHash: HaShDeUnFiChErO\n
+        server: IPServer%Puerto\n
+        \n
+    · Se envía              : operation:upload\nfileHash:HaShDeUnFiChErO\nserver:IPServer%Puerto\n\n
+
+Mensaje "fichero subido correctamente":
+    · Operación             : uploadOk
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que el fichero se ha subido correctamente al server indicado
+    · Condiciones de envío  : Recibir el mensaje "upload"
+    · Acciones al recibirlo : Devolver "uploadOk"
+    · Formato               : 
+        operation: uploadOk\n
+        \n
+    · Se envía              : operation:uploadOk\n\n
+
+Mensaje "error al subir un fichero":
+    · Operación             : uploadBad
+    · Emisor                : Directory
+    · Receptor              : NanoFiles
+    · Campo/s adicionales   : ❌
+    · Finalidad             : Informar de que el fichero NO se ha subido correctamente al server indicado, bien 
+                              porque lo tenía previamente o bien porque ha surgido algún error
+    · Condiciones de envío  : Recibir el mensaje "upload"
+    · Acciones al recibirlo : Devolver "uploadBad"
+    · Formato               : 
+        operation: uploadBad\n
+        \n
+    · Se envía              : operation:uploadBad\n\n

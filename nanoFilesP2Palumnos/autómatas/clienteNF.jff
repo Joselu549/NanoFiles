@@ -3,24 +3,24 @@
 	<automaton>
 		<!--The list of states.-->
 		<state id="0" name="q0">
-			<x>159.0</x>
-			<y>139.0</y>
+			<x>169.0</x>
+			<y>39.0</y>
 			<label>OFFLINE</label>
 			<initial/>
 		</state>
 		<state id="1" name="q1">
-			<x>351.0</x>
-			<y>140.0</y>
+			<x>348.0</x>
+			<y>38.0</y>
 			<label>wait_ack_ping</label>
 		</state>
 		<state id="2" name="q2">
-			<x>541.0</x>
-			<y>141.0</y>
+			<x>519.0</x>
+			<y>37.0</y>
 			<label>retry_ping</label>
 		</state>
 		<state id="3" name="q3">
-			<x>164.0</x>
-			<y>375.0</y>
+			<x>173.0</x>
+			<y>323.0</y>
 			<label>ONLINE</label>
 		</state>
 		<state id="4" name="q4">
@@ -30,20 +30,50 @@
 			<final/>
 		</state>
 		<state id="5" name="q5">
-			<x>539.0</x>
-			<y>258.0</y>
+			<x>518.0</x>
+			<y>119.0</y>
 			<label>wait_ack_requestFileList</label>
 		</state>
 		<state id="6" name="q6">
-			<x>828.0</x>
-			<y>256.0</y>
+			<x>736.0</x>
+			<y>121.0</y>
 			<label>retry_requestFileList</label>
+		</state>
+		<state id="7" name="q7">
+			<x>534.0</x>
+			<y>322.0</y>
+			<label>wait_download_pkg</label>
+		</state>
+		<state id="8" name="q8">
+			<x>765.0</x>
+			<y>322.0</y>
+			<label>retry_download_pkg</label>
+		</state>
+		<state id="9" name="q9">
+			<x>165.0</x>
+			<y>554.0</y>
+			<label>wait_ack_serve</label>
+		</state>
+		<state id="10" name="q10">
+			<x>161.0</x>
+			<y>736.0</y>
+			<label>SERVE</label>
+		</state>
+		<state id="11" name="q11">
+			<x>524.0</x>
+			<y>485.0</y>
+			<label>wait_ack_upload</label>
+		</state>
+		<state id="12" name="q12">
+			<x>772.0</x>
+			<y>485.0</y>
+			<label>retry_upload</label>
 		</state>
 		<!--The list of transitions.-->
 		<transition>
-			<from>5</from>
-			<to>3</to>
-			<read>rcv(filelistOk)</read>
+			<from>1</from>
+			<to>2</to>
+			<read>TIMEOUT</read>
 		</transition>
 		<transition>
 			<from>5</from>
@@ -51,9 +81,24 @@
 			<read>TIMEOUT</read>
 		</transition>
 		<transition>
-			<from>5</from>
+			<from>2</from>
+			<to>1</to>
+			<read>snd(ping)</read>
+		</transition>
+		<transition>
+			<from>9</from>
 			<to>3</to>
-			<read>TIMEOUT_N</read>
+			<read>rcv(serveBad)</read>
+		</transition>
+		<transition>
+			<from>11</from>
+			<to>3</to>
+			<read>rcv(uploadOk)</read>
+		</transition>
+		<transition>
+			<from>11</from>
+			<to>3</to>
+			<read>rcv(uploadBad)</read>
 		</transition>
 		<transition>
 			<from>1</from>
@@ -61,9 +106,69 @@
 			<read>rcv(pingOk)</read>
 		</transition>
 		<transition>
+			<from>10</from>
+			<to>4</to>
+			<read>quit</read>
+		</transition>
+		<transition>
+			<from>0</from>
+			<to>4</to>
+			<read>quit</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>8</to>
+			<read>TIMEOUT</read>
+		</transition>
+		<transition>
+			<from>11</from>
+			<to>12</to>
+			<read>TIMEOUT</read>
+		</transition>
+		<transition>
+			<from>12</from>
+			<to>11</to>
+			<read>snd(upload)</read>
+		</transition>
+		<transition>
 			<from>3</from>
+			<to>7</to>
+			<read>snd(download)</read>
+		</transition>
+		<transition>
+			<from>6</from>
 			<to>5</to>
 			<read>snd(filelist)</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>4</to>
+			<read>quit</read>
+		</transition>
+		<transition>
+			<from>1</from>
+			<to>0</to>
+			<read>TIMEOUT_N</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>9</to>
+			<read>snd(serve)</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>3</to>
+			<read>rcv(downloadServerList)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>rcv(filelistOk)</read>
+		</transition>
+		<transition>
+			<from>5</from>
+			<to>3</to>
+			<read>TIMEOUT_N</read>
 		</transition>
 		<transition>
 			<from>0</from>
@@ -76,24 +181,14 @@
 			<read>rcv(pingBad)</read>
 		</transition>
 		<transition>
-			<from>6</from>
-			<to>5</to>
-			<read>snd(filelist)</read>
-		</transition>
-		<transition>
-			<from>2</from>
-			<to>1</to>
-			<read>snd(ping)</read>
-		</transition>
-		<transition>
-			<from>0</from>
-			<to>4</to>
-			<read>quit</read>
+			<from>8</from>
+			<to>7</to>
+			<read>snd(download)</read>
 		</transition>
 		<transition>
 			<from>3</from>
-			<to>4</to>
-			<read>quit</read>
+			<to>11</to>
+			<read>snd(upload)</read>
 		</transition>
 		<transition>
 			<from>5</from>
@@ -101,13 +196,23 @@
 			<read>rcv(filelistBad)</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>2</to>
-			<read>TIMEOUT</read>
+			<from>9</from>
+			<to>10</to>
+			<read>rcv(serveOk)</read>
 		</transition>
 		<transition>
-			<from>1</from>
-			<to>0</to>
+			<from>11</from>
+			<to>3</to>
+			<read>TIMEOUT_N</read>
+		</transition>
+		<transition>
+			<from>3</from>
+			<to>5</to>
+			<read>snd(filelist)</read>
+		</transition>
+		<transition>
+			<from>7</from>
+			<to>3</to>
 			<read>TIMEOUT_N</read>
 		</transition>
 	</automaton>
