@@ -10,8 +10,8 @@
 			<final/>
 		</state>
 		<state id="1" name="q1">
-			<x>504.0</x>
-			<y>55.0</y>
+			<x>495.0</x>
+			<y>64.0</y>
 			<label>process_ping</label>
 		</state>
 		<state id="2" name="q2">
